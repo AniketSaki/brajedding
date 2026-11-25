@@ -1,7 +1,7 @@
 # Brajedding: wedding countdown site for Brajesh
 
 Date: 2026-11-25
-Status: draft, awaiting owner approval
+Status: approved (2026-11-25)
 
 ## Intent
 
