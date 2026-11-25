@@ -124,7 +124,7 @@ img { max-width: 100%; display: block; }
     margin: 0 auto;
     padding: 0 2.5rem;
   }
-  .pair-botd { grid-template-columns: 3fr 2fr; }
-  .pair-poll { grid-template-columns: 1fr 1fr; }
+  .pair-botd { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
+  .pair-poll { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .pair > .section { padding-left: 0; padding-right: 0; max-width: none; margin: 0; }
 }

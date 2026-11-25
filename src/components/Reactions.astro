@@ -24,6 +24,7 @@ const words = site.reactions.words;
 <script>
   import { site } from '../config/site';
   import { applyLocal, chipsFor, nextChoice } from '../lib/reactions';
+  import { createReactionQueue } from '../lib/reactionQueue';
 
   type Counts = Record<string, number>;
   const words = site.reactions.words;
@@ -92,42 +93,55 @@ const words = site.reactions.words;
     picker.querySelector<HTMLElement>('[data-word]')?.focus();
   }
 
-  async function pick(bar: HTMLElement, word: string) {
-    const card = bar.dataset.card!;
-    const prev = mine[card] ?? null;
-    const next = nextChoice(prev, word);
-    const before = counts[card] ?? {};
-    counts[card] = applyLocal(before, prev, next);
-    mine[card] = next;
-    render(bar);
+  const barFor = (card: string) => bars.find((b) => b.dataset.card === card);
+
+  async function load(): Promise<boolean> {
     try {
+      const res = await fetch('/api/reactions');
+      if (!res.ok) return false;
+      const body = await res.json();
+      Object.assign(counts, body.counts);
+      for (const card of Object.keys(counts)) mine[card] = body.mine[card] ?? null;
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  const queue = createReactionQueue<{ counts: Counts; mine: string | null }>(
+    async (card, word) => {
       const res = await fetch('/api/reactions', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ card, word: next }),
+        body: JSON.stringify({ card, word }),
       });
       if (!res.ok) throw new Error(String(res.status));
-      const body = await res.json();
+      return res.json();
+    },
+    (card, body) => {
       counts[card] = body.counts;
       mine[card] = body.mine;
-    } catch {
-      counts[card] = before;
-      mine[card] = prev;
-    }
+      const bar = barFor(card);
+      if (bar) render(bar);
+    },
+    async () => {
+      // Resync everything from the server rather than guess what state we're in.
+      if (await load()) bars.forEach(render);
+    },
+  );
+
+  function pick(bar: HTMLElement, word: string) {
+    const card = bar.dataset.card!;
+    const prev = mine[card] ?? null;
+    const next = nextChoice(prev, word);
+    counts[card] = applyLocal(counts[card] ?? {}, prev, next);
+    mine[card] = next;
     render(bar);
+    queue.set(card, next);
   }
 
   async function init() {
-    if (!bars.length) return;
-    try {
-      const res = await fetch('/api/reactions');
-      if (!res.ok) return;
-      const body = await res.json();
-      Object.assign(counts, body.counts);
-      Object.assign(mine, body.mine);
-    } catch {
-      return;
-    }
+    if (!bars.length || !(await load())) return;
     for (const bar of bars) {
       render(bar);
       bar.hidden = false;

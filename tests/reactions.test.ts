@@ -38,3 +38,10 @@ test('applyLocal moves one count, never below zero', () => {
   expect(applyLocal({}, 'slay', null)).toEqual({ slay: 0 });
   expect(applyLocal({ sus: 2 }, null, 'sus')).toEqual({ sus: 3 });
 });
+
+import { storyIdFromFile } from '../src/lib/cards';
+
+test('story card id matches Astro content id for non-slug filenames', () => {
+  expect(storyIdFromFile('the-iffk-threesome.md')).toBe('the-iffk-threesome');
+  expect(storyIdFromFile('Mubi_Club Years.md')).toBe('mubi_club-years');
+});

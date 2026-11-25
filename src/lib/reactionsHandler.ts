@@ -25,12 +25,17 @@ export async function handleReactions(
 
   try {
     const existing = voterFrom(req);
+    const cookieFor = (id: string): Record<string, string> => {
+      const secure = new URL(req.url).protocol === 'https:' ? '; Secure' : '';
+      return { 'set-cookie': `rid=${id}; Max-Age=${ONE_YEAR}; Path=/; HttpOnly; SameSite=Lax${secure}` };
+    };
     if (req.method === 'GET') {
       const [counts, mine] = await Promise.all([
         getCounts(store, opts.cards, opts.words),
         existing ? getMine(store, existing, opts.cards) : Promise.resolve({}),
       ]);
-      return json(200, { counts, mine });
+      // Issue the voter id up front so a newcomer's first rapid taps all carry the same id.
+      return json(200, { counts, mine }, existing ? {} : cookieFor(opts.newVoterId()));
     }
 
     let body: { card?: unknown; word?: unknown };
@@ -47,12 +52,7 @@ export async function handleReactions(
 
     const voterId = existing ?? opts.newVoterId();
     const counts = await setReaction(store, voterId, card, word, opts.words);
-    const headers: Record<string, string> = {};
-    if (!existing) {
-      const secure = new URL(req.url).protocol === 'https:' ? '; Secure' : '';
-      headers['set-cookie'] = `rid=${voterId}; Max-Age=${ONE_YEAR}; Path=/; HttpOnly; SameSite=Lax${secure}`;
-    }
-    return json(200, { card, counts, mine: word }, headers);
+    return json(200, { card, counts, mine: word }, existing ? {} : cookieFor(voterId));
   } catch (err) {
     console.error('reactions error', err);
     return json(503, { error: 'Reactions are temporarily unavailable' });

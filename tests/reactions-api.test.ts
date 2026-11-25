@@ -142,3 +142,10 @@ test('other methods → 405', async () => {
   const res = await handleReactions(new Request(URL_, { method: 'PUT' }), fakeStore(), opts);
   expect(res.status).toBe(405);
 });
+
+test('GET without cookie issues rid so first taps share one voter', async () => {
+  const res = await handleReactions(get(), fakeStore(), opts);
+  expect(res.headers.get('set-cookie') ?? '').toContain(`rid=${NEW_ID}`);
+  const again = await handleReactions(get(A), fakeStore(), opts);
+  expect(again.headers.get('set-cookie')).toBeNull();
+});
