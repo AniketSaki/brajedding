@@ -12,7 +12,7 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; overflow-x: clip; }
+html { -webkit-text-size-adjust: 100%; overflow-x: hidden; overflow-x: clip; }
 
 body {
   margin: 0;
@@ -20,6 +20,7 @@ body {
   font-size: 16px;
   line-height: 1.5;
   color: var(--ink);
+  overflow-x: hidden; /* fallback for browsers without clip */
   overflow-x: clip;
 }
 
@@ -111,4 +112,19 @@ img { max-width: 100%; display: block; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* Laptop layout: pair short sections side by side instead of leaving wide empty margins */
+@media (min-width: 900px) {
+  .pair {
+    display: grid;
+    align-items: center;
+    gap: 2.5rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2.5rem;
+  }
+  .pair-botd { grid-template-columns: 3fr 2fr; }
+  .pair-poll { grid-template-columns: 1fr 1fr; }
+  .pair > .section { padding-left: 0; padding-right: 0; max-width: none; margin: 0; }
 }

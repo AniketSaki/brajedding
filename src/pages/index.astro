@@ -13,12 +13,16 @@ import { site } from '../config/site';
 <Base title={site.title}>
   <Hero />
   <main>
-    <Botd />
-    <Shout />
+    <div class="pair pair-botd">
+      <Botd />
+      <Shout />
+    </div>
     <Stickered />
     <Reviews />
-    <Poll />
-    <Farewell />
+    <div class="pair pair-poll">
+      <Poll />
+      <Farewell />
+    </div>
   </main>
   <Footer />
 </Base>
