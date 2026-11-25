@@ -1,0 +1,150 @@
+---
+import { site } from '../config/site';
+import { getCountdownState } from '../lib/countdown';
+
+const initial = getCountdownState(new Date(), new Date(site.weddingAt));
+const pad = (n: number) => String(n).padStart(2, '0');
+const units =
+  initial.kind === 'before'
+    ? [
+        { key: 'days', value: String(initial.days), label: 'Days' },
+        { key: 'hours', value: pad(initial.hours), label: 'Hrs' },
+        { key: 'minutes', value: pad(initial.minutes), label: 'Min' },
+        { key: 'seconds', value: pad(initial.seconds), label: 'Sec' },
+      ]
+    : [];
+---
+<header class="hero halftone-blue" data-wedding-at={site.weddingAt} data-stream-url={site.streamUrl}>
+  <div class="film-strip"></div>
+  <div class="hero-inner">
+    <p class="live-badge label"><i></i>{site.badge}</p>
+    <h1 class="title misprint">{site.title}</h1>
+    <p class="tagline label">{site.tagline}</p>
+
+    <div class="countdown" data-countdown role="timer" aria-label="Time until the wedding">
+      {units.map((u) => (
+        <div class="unit">
+          <b data-unit={u.key}>{u.value}</b>
+          <span>{u.label}</span>
+        </div>
+      ))}
+    </div>
+    <div class="status" data-status hidden></div>
+
+    <p class="credit label">{site.credit.prefix} <b>{site.credit.name}</b></p>
+  </div>
+</header>
+
+<script>
+  import { getCountdownState, formatMarried } from '../lib/countdown';
+  import { celebrate } from '../lib/celebrate';
+
+  const hero = document.querySelector<HTMLElement>('.hero')!;
+  const weddingAt = new Date(hero.dataset.weddingAt!);
+  const streamUrl = hero.dataset.streamUrl ?? '';
+  const countdown = hero.querySelector<HTMLElement>('[data-countdown]')!;
+  const status = hero.querySelector<HTMLElement>('[data-status]')!;
+  const pad = (n: number) => String(n).padStart(2, '0');
+  let celebrated = false;
+  let timer: number | undefined;
+
+  function showStatus(html: string) {
+    countdown.hidden = true;
+    status.hidden = false;
+    status.innerHTML = html;
+  }
+
+  function tick() {
+    const s = getCountdownState(new Date(), weddingAt);
+    if (s.kind === 'before') {
+      const set = (k: string, v: string) => {
+        const el = countdown.querySelector(`[data-unit="${k}"]`);
+        if (el && el.textContent !== v) el.textContent = v;
+      };
+      set('days', String(s.days));
+      set('hours', pad(s.hours));
+      set('minutes', pad(s.minutes));
+      set('seconds', pad(s.seconds));
+      return;
+    }
+    if (s.kind === 'live') {
+      if (!celebrated) {
+        celebrated = true;
+        const live = '🔴 STREAMING LIVE NOW';
+        showStatus(
+          streamUrl
+            ? `<a class="live-now live-link" href="${encodeURI(streamUrl)}" target="_blank" rel="noopener">${live} ↗</a>`
+            : `<span class="live-now">${live}</span>`,
+        );
+        celebrate({ reducedMotion: matchMedia('(prefers-reduced-motion: reduce)').matches });
+      }
+      return;
+    }
+    showStatus(`<span class="married">${formatMarried(s.daysMarried)}</span>`);
+    clearInterval(timer);
+  }
+
+  tick();
+  timer = window.setInterval(tick, 1000);
+</script>
+
+<style>
+  .hero { border-bottom: 4px solid var(--ink); }
+  .hero-inner { padding: 1.75rem 1.25rem 1.5rem; max-width: 1100px; margin: 0 auto; }
+  @media (min-width: 768px) { .hero-inner { padding: 3rem 2.5rem 2.5rem; } }
+
+  .live-badge {
+    display: inline-flex; align-items: center; gap: 0.45rem; margin: 0;
+    background: var(--white); color: var(--blue); border: 2px solid var(--ink);
+    padding: 0.2rem 0.55rem; font-size: 0.62rem;
+  }
+  .live-badge i { width: 8px; height: 8px; border-radius: 50%; background: #e00; animation: blink 1.4s infinite; }
+  @keyframes blink { 50% { opacity: 0.25; } }
+
+  .title {
+    font-family: var(--display); font-weight: 400; letter-spacing: 0.02em;
+    font-size: clamp(2.6rem, 11vw, 5rem); line-height: 0.95; text-transform: uppercase;
+    transform: rotate(-2deg); margin: 1rem 0 0.6rem;
+  }
+  .tagline { color: var(--grey); margin: 0; }
+
+  .countdown { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.5rem; margin-top: 1.25rem; max-width: 560px; }
+  .unit {
+    background: var(--white); color: var(--blue); border: 2px solid var(--ink);
+    box-shadow: 3px 3px 0 var(--ink); text-align: center; padding: 0.45rem 0.1rem;
+  }
+  .unit b {
+    display: block; font-family: var(--display); font-weight: 400;
+    font-size: clamp(1.7rem, 9vw, 3rem); line-height: 1; text-shadow: 2px 0 0 var(--pink);
+    font-variant-numeric: tabular-nums;
+  }
+  .unit span { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+
+  .status { margin-top: 1.25rem; }
+  .status :global(.live-now), .status :global(.married) {
+    display: inline-block; background: var(--white); color: var(--blue); border: 3px solid var(--ink);
+    box-shadow: 5px 5px 0 var(--pink); padding: 0.6rem 1rem;
+    font-family: var(--display); font-size: clamp(1.6rem, 7vw, 2.6rem); letter-spacing: 0.03em;
+    text-decoration: none; transform: rotate(-1deg);
+  }
+  .status :global(.live-link):hover { background: var(--yellow); }
+
+  .credit { margin: 1.25rem 0 0; padding-top: 0.75rem; border-top: 1px dashed var(--grey); color: var(--grey); }
+  .credit b { color: var(--white); }
+
+  :global(.balloon-layer) { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 50; }
+  :global(.balloon) {
+    position: absolute; bottom: -120px; width: 54px; height: 66px; border-radius: 50% 50% 48% 48%;
+    background: var(--c); border: 2px solid var(--ink);
+    animation-name: float-up; animation-timing-function: ease-in; animation-fill-mode: forwards;
+  }
+  :global(.balloon)::after {
+    content: ''; position: absolute; left: 50%; top: 100%; width: 1px; height: 50px; background: var(--ink);
+  }
+  @keyframes float-up {
+    0% { transform: translate(0, 0) rotate(-4deg); }
+    50% { transform: translate(14px, -60vh) rotate(5deg); }
+    100% { transform: translate(-10px, -130vh) rotate(-4deg); }
+  }
+  :global(.celebrate-static) .status::after { content: ' 🎈🎉🎈'; font-size: 2rem; }
+</style>

@@ -25,6 +25,8 @@ body {
 
 img { max-width: 100%; display: block; }
 
+[hidden] { display: none !important; }
+
 /* Pink halftone dots on yellow: the zine background below the hero */
 .halftone-yellow {
   background-color: var(--yellow);
