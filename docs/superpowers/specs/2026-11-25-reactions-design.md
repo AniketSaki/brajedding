@@ -1,7 +1,7 @@
 # Reactions on photo and story cards + laptop layout
 
 Date: 2026-11-25
-Status: draft, awaiting owner approval
+Status: approved (2026-11-25)
 Builds on: `2026-11-25-brajedding-site-design.md`
 
 ## Intent
