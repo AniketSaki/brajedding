@@ -1,9 +1,12 @@
 ---
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
+import Botd from '../components/Botd.astro';
 import { site } from '../config/site';
 ---
 <Base title={site.title}>
   <Hero />
-  <main></main>
+  <main>
+    <Botd />
+  </main>
 </Base>

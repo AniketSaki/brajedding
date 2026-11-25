@@ -1,0 +1,64 @@
+---
+import quotes from '../data/quotes.json';
+---
+<section class="section botd" aria-labelledby="botd-label">
+  <div class="bubble">
+    <p class="head">
+      <span class="tag">BoTD</span>
+      <span class="label" id="botd-label">Brajesh of the Day</span>
+    </p>
+    <blockquote data-quote aria-live="polite"></blockquote>
+    <noscript><blockquote>“{quotes[0]}”</blockquote></noscript>
+    <button class="btn" type="button" data-next><span aria-hidden="true">↻</span> *Varuned</button>
+  </div>
+  <script type="application/json" data-quotes set:html={JSON.stringify(quotes)}></script>
+</section>
+
+<script>
+  import { pickQuote } from '../lib/quotes';
+
+  const root = document.querySelector<HTMLElement>('.botd')!;
+  const quotes: string[] = JSON.parse(root.querySelector('[data-quotes]')!.textContent || '[]');
+  const out = root.querySelector<HTMLElement>('[data-quote]')!;
+  const btn = root.querySelector<HTMLButtonElement>('[data-next]')!;
+  let current: string | null = null;
+
+  function show() {
+    if (!quotes.length) return;
+    current = pickQuote(quotes, current);
+    out.textContent = `“${current}”`;
+    out.classList.remove('pop');
+    void out.offsetWidth;
+    out.classList.add('pop');
+  }
+
+  if (quotes.length < 2) btn.hidden = true;
+  btn.addEventListener('click', show);
+  show();
+</script>
+
+<style>
+  .botd { padding-top: 2rem; padding-bottom: 2.5rem; }
+  .bubble {
+    position: relative; max-width: 620px; margin: 0 auto;
+    background: var(--white); border: 3px solid var(--ink); border-radius: 24px;
+    box-shadow: 6px 6px 0 var(--ink); padding: 1.1rem 1.2rem 1.25rem; transform: rotate(0.6deg);
+  }
+  .bubble::after {
+    content: ''; position: absolute; left: 2.2rem; bottom: -24px;
+    border: 12px solid transparent; border-top: 16px solid var(--ink); border-left: 6px solid var(--ink);
+  }
+  .head { display: flex; align-items: center; gap: 0.6rem; margin: 0; flex-wrap: wrap; }
+  .head .label { color: #777; }
+  .tag {
+    display: inline-block; background: var(--pink); color: var(--white); border: 2px solid var(--ink);
+    padding: 0.1rem 0.5rem; font-family: var(--display); font-size: 1.2rem; letter-spacing: 0.05em;
+    transform: rotate(-3deg);
+  }
+  blockquote {
+    margin: 0.9rem 0 1rem; min-height: 3.2em;
+    font-family: var(--display); font-size: clamp(1.6rem, 6.5vw, 2.4rem); line-height: 1.1; letter-spacing: 0.02em;
+  }
+  blockquote.pop { animation: pop 0.25s ease-out; }
+  @keyframes pop { from { transform: scale(0.92); opacity: 0.3; } to { transform: none; opacity: 1; } }
+</style>
