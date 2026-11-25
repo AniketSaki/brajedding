@@ -1,30 +1,26 @@
 ---
 import { site } from '../config/site';
-import { getCountdownState } from '../lib/countdown';
 
-const initial = getCountdownState(new Date(), new Date(site.weddingAt));
-const pad = (n: number) => String(n).padStart(2, '0');
-const units =
-  initial.kind === 'before'
-    ? [
-        { key: 'days', value: String(initial.days), label: 'Days' },
-        { key: 'hours', value: pad(initial.hours), label: 'Hrs' },
-        { key: 'minutes', value: pad(initial.minutes), label: 'Min' },
-        { key: 'seconds', value: pad(initial.seconds), label: 'Sec' },
-      ]
-    : [];
+// Numbers are filled in by the script below; the static HTML only carries dashes so a
+// cached page never shows a stale build-time countdown.
+const units = [
+  { key: 'days', label: 'Days' },
+  { key: 'hours', label: 'Hrs' },
+  { key: 'minutes', label: 'Min' },
+  { key: 'seconds', label: 'Sec' },
+];
 ---
 <header class="hero halftone-blue" data-wedding-at={site.weddingAt} data-stream-url={site.streamUrl}>
   <div class="film-strip"></div>
   <div class="hero-inner">
-    <p class="live-badge label"><i></i>{site.badge}</p>
+    <p class="live-badge label" data-badge><i></i>{site.badge}</p>
     <h1 class="title misprint">{site.title}</h1>
     <p class="tagline label">{site.tagline}</p>
 
     <div class="countdown" data-countdown role="timer" aria-label="Time until the wedding">
       {units.map((u) => (
         <div class="unit">
-          <b data-unit={u.key}>{u.value}</b>
+          <b data-unit={u.key}>--</b>
           <span>{u.label}</span>
         </div>
       ))}
@@ -36,7 +32,8 @@ const units =
 </header>
 
 <script>
-  import { getCountdownState, formatMarried } from '../lib/countdown';
+  import { getCountdownState } from '../lib/countdown';
+  import { heroView } from '../lib/heroView';
   import { celebrate } from '../lib/celebrate';
 
   const hero = document.querySelector<HTMLElement>('.hero')!;
@@ -44,44 +41,54 @@ const units =
   const streamUrl = hero.dataset.streamUrl ?? '';
   const countdown = hero.querySelector<HTMLElement>('[data-countdown]')!;
   const status = hero.querySelector<HTMLElement>('[data-status]')!;
+  const badge = hero.querySelector<HTMLElement>('[data-badge]')!;
   const pad = (n: number) => String(n).padStart(2, '0');
+  let shownStatus = '';
   let celebrated = false;
   let timer: number | undefined;
 
-  function showStatus(html: string) {
-    countdown.hidden = true;
-    status.hidden = false;
-    status.innerHTML = html;
+  function setUnit(k: string, v: string) {
+    const el = countdown.querySelector(`[data-unit="${k}"]`);
+    if (el && el.textContent !== v) el.textContent = v;
   }
 
   function tick() {
-    const s = getCountdownState(new Date(), weddingAt);
-    if (s.kind === 'before') {
-      const set = (k: string, v: string) => {
-        const el = countdown.querySelector(`[data-unit="${k}"]`);
-        if (el && el.textContent !== v) el.textContent = v;
-      };
-      set('days', String(s.days));
-      set('hours', pad(s.hours));
-      set('minutes', pad(s.minutes));
-      set('seconds', pad(s.seconds));
-      return;
+    const state = getCountdownState(new Date(), weddingAt);
+    const view = heroView(state, streamUrl);
+    countdown.hidden = !view.showCountdown;
+    badge.hidden = !view.showBadge;
+
+    if (state.kind === 'before') {
+      setUnit('days', String(state.days));
+      setUnit('hours', pad(state.hours));
+      setUnit('minutes', pad(state.minutes));
+      setUnit('seconds', pad(state.seconds));
     }
-    if (s.kind === 'live') {
-      if (!celebrated) {
-        celebrated = true;
-        const live = '🔴 STREAMING LIVE NOW';
-        showStatus(
-          streamUrl
-            ? `<a class="live-now live-link" href="${encodeURI(streamUrl)}" target="_blank" rel="noopener">${live} ↗</a>`
-            : `<span class="live-now">${live}</span>`,
-        );
-        celebrate({ reducedMotion: matchMedia('(prefers-reduced-motion: reduce)').matches });
+
+    const key = view.status ? `${view.status.text}|${view.status.href}` : '';
+    if (key !== shownStatus) {
+      shownStatus = key;
+      status.hidden = !view.status;
+      status.replaceChildren();
+      if (view.status) {
+        const el = document.createElement(view.status.href ? 'a' : 'span');
+        el.className = state.kind === 'live' ? 'live-now' : 'married';
+        el.textContent = view.status.text + (view.status.href ? ' ↗' : '');
+        if (el instanceof HTMLAnchorElement && view.status.href) {
+          el.href = view.status.href;
+          el.target = '_blank';
+          el.rel = 'noopener';
+          el.classList.add('live-link');
+        }
+        status.appendChild(el);
       }
-      return;
     }
-    showStatus(`<span class="married">${formatMarried(s.daysMarried)}</span>`);
-    clearInterval(timer);
+
+    if (state.kind === 'live' && !celebrated) {
+      celebrated = true;
+      celebrate({ reducedMotion: matchMedia('(prefers-reduced-motion: reduce)').matches });
+    }
+    if (state.kind === 'after') clearInterval(timer);
   }
 
   tick();
