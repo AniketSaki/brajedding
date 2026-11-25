@@ -41,6 +41,10 @@ const { Content } = await render(story);
   .prose :global(h2), .prose :global(h3) { font-family: var(--display); font-weight: 400; letter-spacing: 0.03em; font-size: 1.7rem; margin: 1.4rem 0 0.4rem; }
   .prose :global(p) { max-width: 65ch; }
   .prose :global(a) { color: var(--blue); }
+  .prose :global(table) { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.98rem; }
+  .prose :global(th), .prose :global(td) { border: 2px solid var(--ink); padding: 0.4rem 0.55rem; text-align: left; }
+  .prose :global(th) { background: var(--ink); color: var(--yellow); font-family: var(--display); font-weight: 400; letter-spacing: 0.04em; }
+  .prose :global(tr:nth-child(3) td) { background: rgba(255, 79, 154, 0.18); }
   .prose :global(img) { border: 3px solid var(--ink); margin: 1rem 0; }
   .back-bottom { max-width: 760px; margin: 1.5rem auto 0; }
   .back-bottom .btn { text-decoration: none; }
