@@ -1,0 +1,131 @@
+---
+import { site } from '../config/site';
+const { question, options } = site.poll;
+---
+<section class="section poll" aria-labelledby="poll-h">
+  <h2 class="tab">Audience poll</h2>
+  <div class="panel" data-poll data-options={JSON.stringify(options)}>
+    <h3 id="poll-h">{question}</h3>
+    <div class="choices" data-choices>
+      {options.map((o) => (
+        <button type="button" class="choice" data-option={o.id}>{o.label}</button>
+      ))}
+    </div>
+    <ol class="results" data-results hidden></ol>
+    <p class="total" data-total hidden></p>
+    <p class="note" data-note role="status" hidden></p>
+  </div>
+</section>
+
+<script>
+  import { tally } from '../lib/poll';
+  import type { PollOption } from '../config/site';
+
+  const KEY = 'brajedding-poll';
+  const root = document.querySelector<HTMLElement>('[data-poll]')!;
+  const options: PollOption[] = JSON.parse(root.dataset.options!);
+  const choices = root.querySelector<HTMLElement>('[data-choices]')!;
+  const results = root.querySelector<HTMLOListElement>('[data-results]')!;
+  const total = root.querySelector<HTMLElement>('[data-total]')!;
+  const note = root.querySelector<HTMLElement>('[data-note]')!;
+  const BROKEN = 'The projector broke. Try again later.';
+
+  const stored = (() => {
+    try { return localStorage.getItem(KEY); } catch { return null; }
+  })();
+
+  function showNote(text: string) {
+    note.textContent = text;
+    note.hidden = false;
+  }
+
+  function render(counts: Record<string, number>, mine: string | null) {
+    const t = tally(counts, options);
+    results.replaceChildren(
+      ...t.rows.map((r) => {
+        const li = document.createElement('li');
+        li.className = 'row' + (r.id === mine ? ' mine' : '');
+        li.innerHTML = `<span class="bar" style="width:${r.percent}%"></span><span class="lbl"></span><span class="pct">${r.percent}%</span>`;
+        li.querySelector('.lbl')!.textContent = r.label + (r.id === mine ? '  ← you' : '');
+        return li;
+      }),
+    );
+    choices.hidden = true;
+    results.hidden = false;
+    total.textContent = `POW! ${t.total} ${t.total === 1 ? 'vote' : 'votes'}`;
+    total.hidden = false;
+    note.hidden = true;
+  }
+
+  async function call(init?: RequestInit) {
+    const res = await fetch('/api/poll', init);
+    const body = await res.json().catch(() => ({}));
+    return { status: res.status, body };
+  }
+
+  async function showResults(mine: string | null) {
+    try {
+      const { status, body } = await call();
+      if (status === 200) render(body.counts, mine);
+      else showNote(BROKEN);
+    } catch {
+      showNote(BROKEN);
+    }
+  }
+
+  choices.addEventListener('click', async (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-option]');
+    if (!btn) return;
+    const id = btn.dataset.option!;
+    choices.querySelectorAll('button').forEach((b) => (b.disabled = true));
+    try {
+      const { status, body } = await call({
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ option: id }),
+      });
+      if (status === 200 || status === 409) {
+        try { localStorage.setItem(KEY, status === 200 ? id : 'voted'); } catch {}
+        render(body.counts, status === 200 ? id : null);
+        if (status === 409) showNote('You already voted. Nice try.');
+        return;
+      }
+      showNote(BROKEN);
+    } catch {
+      showNote(BROKEN);
+    }
+    choices.querySelectorAll('button').forEach((b) => (b.disabled = false));
+  });
+
+  if (stored) showResults(options.some((o) => o.id === stored) ? stored : null);
+</script>
+
+<style>
+  h3 { margin: 0 0 0.75rem; font-family: var(--display); font-weight: 400; font-size: 1.8rem; letter-spacing: 0.03em; line-height: 1.05; }
+  .panel { max-width: 640px; }
+  .choices { display: grid; gap: 0.6rem; }
+  .choice {
+    text-align: left; font: 700 1rem var(--body); color: var(--ink); background: var(--white);
+    border: 2px solid var(--ink); padding: 0.75rem 0.85rem; cursor: pointer; box-shadow: 3px 3px 0 var(--ink);
+    overflow-wrap: anywhere;
+  }
+  .choice:hover { background: var(--yellow); }
+  .choice:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+  .choice:disabled { opacity: 0.6; cursor: progress; }
+  .results { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+  .results :global(.row) {
+    position: relative; display: flex; justify-content: space-between; gap: 0.75rem; align-items: center;
+    border: 2px solid var(--ink); padding: 0.6rem 0.75rem; font-weight: 700; background: var(--white); overflow: hidden;
+  }
+  .results :global(.row.mine) { box-shadow: 3px 3px 0 var(--pink); }
+  .results :global(.bar) { position: absolute; inset: 0 auto 0 0; background: var(--cyan); opacity: 0.45; transition: width 0.6s ease-out; }
+  .results :global(.lbl), .results :global(.pct) { position: relative; }
+  .results :global(.lbl) { overflow-wrap: anywhere; min-width: 0; }
+  .results :global(.pct) { flex-shrink: 0; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .total {
+    display: inline-block; margin: 0.9rem 0 0; font-family: var(--display); font-size: 1.9rem; color: var(--pink);
+    text-shadow: 2px 2px 0 var(--ink); transform: rotate(-6deg); animation: pow 0.35s ease-out;
+  }
+  @keyframes pow { from { transform: scale(0.4) rotate(-20deg); } to { transform: rotate(-6deg); } }
+  .note { margin: 0.8rem 0 0; font-weight: 700; }
+</style>
