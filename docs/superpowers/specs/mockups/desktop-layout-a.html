@@ -1,0 +1,77 @@
+<style>
+  .lay{display:grid;gap:26px}
+  .desk{width:100%;max-width:980px;margin:0 auto;border:2px solid #111;border-radius:8px;overflow:hidden;font-family:Arial,sans-serif;font-size:11px;color:#111;
+    background-color:#ffe94d;background-image:radial-gradient(#ff4f9a 1.1px,transparent 1.4px);background-size:8px 8px}
+  .hero{background:#001489;color:#fff;padding:18px 30px;border-bottom:3px solid #111}
+  .hero h1{margin:6px 0;font-family:"Arial Black",sans-serif;font-size:30px;text-transform:uppercase;text-shadow:2px 0 #ff4f9a,-2px 0 #00e5ff}
+  .cd{display:flex;gap:8px}.cd div{background:#fff;color:#001489;border:2px solid #111;padding:6px 14px;font:900 20px "Arial Black",sans-serif;box-shadow:2px 2px 0 #111}
+  .wrap{padding:16px 30px;display:grid;gap:18px}
+  .row2{display:grid;grid-template-columns:3fr 2fr;gap:22px;align-items:center}
+  .row2b{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:center}
+  .bub{background:#fff;border:3px solid #111;border-radius:18px;padding:14px;box-shadow:5px 5px 0 #111;font:900 18px "Arial Black",sans-serif}
+  .shout{background:#fff;border:3px solid #111;padding:22px 10px;text-align:center;font:900 15px "Arial Black",sans-serif;
+    clip-path:polygon(50% 0%,58% 14%,72% 2%,74% 18%,92% 10%,86% 28%,100% 32%,88% 46%,100% 58%,86% 64%,96% 82%,76% 78%,72% 98%,60% 84%,50% 100%,40% 84%,28% 98%,24% 78%,4% 84%,14% 64%,0% 58%,12% 46%,0% 32%,14% 28%,8% 10%,26% 18%,28% 2%,42% 14%);transform:rotate(-5deg)}
+  .tab{display:inline-block;background:#111;color:#ffe94d;padding:2px 8px;font-weight:900}
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:8px}
+  .st{background:#fff;border-radius:10px;padding:5px;box-shadow:0 0 0 2px #111}
+  .ph{height:70px;background:#9ad0ff;border-radius:6px}
+  .rx{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+  .chip{border:1.5px solid #111;background:#fff;padding:1px 6px;font-weight:700;font-size:10px}
+  .chip.me{background:#ff4f9a;color:#fff}
+  .add{border:1.5px dashed #111;background:#ffe94d;padding:1px 6px;font-weight:700;font-size:10px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
+  .card{background:#fff;border:2px solid #111;padding:8px;box-shadow:3px 3px 0 #111}
+  .card b{font-family:"Arial Black",sans-serif}
+  .poll{background:#fff;border:2px solid #111;padding:10px;box-shadow:3px 3px 0 #111}
+  .opt{border:1.5px solid #111;padding:4px;margin-top:4px}
+  .fw{background:#001489;color:#fff;border:2px solid #111;padding:16px;text-align:center;box-shadow:4px 4px 0 #111;font:900 16px "Arial Black",sans-serif}
+  .single{max-width:420px;margin:0 auto}
+  .note{font-size:11px;color:#555;margin:4px 0 0}
+</style>
+
+<h2>Laptop layout: fill the sides</h2>
+<p class="subtitle">Phones stay exactly as they are (one column). These only change screens ~900px and wider. Reaction chips shown under photos and stories.</p>
+
+<div class="lay">
+<div class="option" data-choice="pairs" onclick="toggleSelect(this)">
+  <div class="letter">A</div>
+  <div class="content" style="width:100%">
+    <h3>Side-by-side pairs</h3>
+    <p>BoTD + shout bubble share a row; poll + farewell share a row. Countdown gets wider boxes.</p>
+    <div class="desk">
+      <div class="hero"><div style="font-size:9px;letter-spacing:.2em">● STREAMING LIVE SOON FROM GURUVAYUR</div><h1>Brajesh &amp; Saranya: The Wedding</h1>
+        <div class="cd"><div>69 <small style="font-size:9px">DAYS</small></div><div>12 <small style="font-size:9px">HRS</small></div><div>52 <small style="font-size:9px">MIN</small></div><div>20 <small style="font-size:9px">SEC</small></div></div></div>
+      <div class="wrap">
+        <div class="row2"><div class="bub"><span class="tab">BoTD</span><br>"CEOji must resign"<br><span class="tab" style="font-size:10px">↻ *Varuned</span></div><div class="shout">EMPLOYEE OF THE YEAR - JEFF BEZOS</div></div>
+        <div><span class="tab">STICKERED</span><div class="grid4">
+          <div class="st"><div class="ph"></div><div class="rx"><span class="chip me">slay 4</span><span class="chip">cooked 2</span><span class="add">+ react</span></div></div>
+          <div class="st"><div class="ph"></div><div class="rx"><span class="chip">aura +1000 6</span><span class="add">+ react</span></div></div>
+          <div class="st"><div class="ph"></div><div class="rx"><span class="add">+ react</span></div></div>
+          <div class="st"><div class="ph"></div><div class="rx"><span class="chip">mid 1</span><span class="add">+ react</span></div></div></div></div>
+        <div><span class="tab">REVIEWS</span><div class="grid2">
+          <div class="card"><b>THE IFFK THREESOME</b><br>★★★★☆ · teaser…<div class="rx"><span class="chip">delulu 3</span><span class="chip">sus 5</span><span class="add">+ react</span></div></div>
+          <div class="card"><b>THE MUBI CLUB YEARS</b><br>★★★☆☆ · teaser…<div class="rx"><span class="chip me">L 2</span><span class="add">+ react</span></div></div></div></div>
+        <div class="row2b"><div><span class="tab">AUDIENCE POLL</span><div class="poll"><b>DID YOU GET THE INVITE?</b><div class="opt">Yes, physical… 💌</div><div class="opt">Only a digital… 📱</div><div class="opt">He's thinking… 🤔</div><div class="opt">Gatecrash! 🚪💥</div></div></div>
+          <div class="fw">MUBI CLUB WISHES YOU A FOND FAREWELL<div style="font:400 11px Arial">You will be missed. 🫡</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="option" data-choice="wide" onclick="toggleSelect(this)">
+  <div class="letter">B</div>
+  <div class="content" style="width:100%">
+    <h3>Wider single column</h3>
+    <p>Keep one item per row but stretch BoTD, poll and farewell to the full content width, with the shout bubble overlapping the BoTD corner like a sticker.</p>
+    <div class="desk">
+      <div class="hero"><h1>Brajesh &amp; Saranya: The Wedding</h1></div>
+      <div class="wrap">
+        <div style="position:relative"><div class="bub" style="padding-right:200px"><span class="tab">BoTD</span><br>"CEOji must resign"<br><span class="tab" style="font-size:10px">↻ *Varuned</span></div>
+          <div class="shout" style="position:absolute;right:-10px;top:-14px;width:190px">EMPLOYEE OF THE YEAR - JEFF BEZOS</div></div>
+        <div class="poll"><b>DID YOU GET THE INVITE?</b><div class="grid2" style="margin-top:4px"><div class="opt">Yes, physical… 💌</div><div class="opt">Only a digital… 📱</div><div class="opt">He's thinking… 🤔</div><div class="opt">Gatecrash! 🚪💥</div></div></div>
+        <div class="fw">MUBI CLUB WISHES YOU A FOND FAREWELL</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

@@ -1,4 +1,4 @@
-# Reactions on photo and story cards
+# Reactions on photo and story cards + laptop layout
 
 Date: 2026-11-25
 Status: draft, awaiting owner approval
@@ -46,6 +46,17 @@ There's one sensible way: an on-demand API route `/api/reactions` with the same 
   - the picker closes on outside tap or Esc and is keyboard-accessible;
   - it must work at 320px wide.
 - **Look:** zine style. Chips are white with a black border, your own chip gets a pink fill, and the `+ react` button and picker use the existing panel style.
+
+## Laptop layout (owner picked option A from mockups)
+
+On screens about 900px and wider, the page should use the horizontal space instead of leaving wide empty margins. Phones are unchanged (one column).
+
+- **BoTD and the shout bubble share one row:** BoTD takes about 3/5, the bubble about 2/5, and both are vertically centred.
+- **The poll and the farewell share one row,** half each.
+- **Countdown boxes widen** to use more of the hero width.
+- **Photos stay 4 across and stories 2 across** (already the case), with reaction bars under each.
+- The content max-width stays about 1100px, centred.
+- Reference mockup: `docs/superpowers/specs/mockups/desktop-layout-a.html`.
 
 ## Non-goals
 
