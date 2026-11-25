@@ -1,0 +1,36 @@
+export interface PollOption {
+  id: string;
+  label: string;
+}
+
+export const site = {
+  groom: 'Brajesh',
+  partner: 'Saranya',
+  venue: 'Guruvayur',
+  /** Wedding moment in IST. Change the time here if a muhurtham time is ever known. */
+  weddingAt: '2027-02-03T00:00:00+05:30',
+  /** Paste the live-stream link here (https://…) to turn the wedding-day banner into a button. */
+  streamUrl: '',
+  badge: 'Streaming live soon from Guruvayur',
+  title: 'Brajesh & Saranya: The Wedding',
+  tagline: 'Rated U/A for emotional damage',
+  credit: { prefix: 'Brought to you by', name: 'Dating Splinter' },
+  farewell: {
+    label: 'A message from the management',
+    heading: 'Mubi club wishes you a fond farewell',
+    body: 'You will be missed.',
+  },
+  footer: 'we got brajedding before nadodi subs',
+  poll: {
+    question: 'Did you get the invite?',
+    options: [
+      { id: 'physical', label: 'Yes, physical invite hand delivered in person 💌' },
+      { id: 'digital', label: 'Only a digital group one 📱' },
+      { id: 'thinking', label: "He's thinking about it 🤔" },
+      { id: 'gatecrash', label: 'Gatecrash! 🚪💥' },
+    ] as PollOption[],
+  },
+  meta: {
+    description: "The countdown to Brajesh & Saranya's wedding. Brought to you by Dating Splinter.",
+  },
+};

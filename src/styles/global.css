@@ -1,0 +1,112 @@
+:root {
+  --blue: #001489;
+  --white: #fff;
+  --yellow: #ffe94d;
+  --pink: #ff4f9a;
+  --ink: #111;
+  --cyan: #00e5ff;
+  --grey: #c8c8c8;
+  --display: 'Bangers', 'Arial Black', Impact, sans-serif;
+  --body: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--ink);
+  overflow-x: hidden;
+}
+
+img { max-width: 100%; display: block; }
+
+/* Pink halftone dots on yellow: the zine background below the hero */
+.halftone-yellow {
+  background-color: var(--yellow);
+  background-image: radial-gradient(var(--pink) 1.3px, transparent 1.6px);
+  background-size: 9px 9px;
+}
+
+/* White halftone on blue: the poster */
+.halftone-blue {
+  background-color: var(--blue);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.16) 1.2px, transparent 1.5px);
+  background-size: 8px 8px;
+  color: var(--white);
+}
+
+/* Misregistered comic print offset */
+.misprint { text-shadow: 3px 0 0 var(--pink), -3px 0 0 var(--cyan); }
+
+.label {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.panel {
+  background: var(--white);
+  border: 3px solid var(--ink);
+  box-shadow: 5px 5px 0 var(--ink);
+  padding: 1rem;
+}
+
+.tab {
+  display: inline-block;
+  background: var(--ink);
+  color: var(--yellow);
+  border: 2px solid var(--ink);
+  padding: 0.25rem 0.7rem;
+  transform: rotate(-2deg);
+  font-family: var(--display);
+  font-size: 1.15rem;
+  letter-spacing: 0.08em;
+  font-weight: 400;
+  margin: 0 0 1rem;
+}
+
+.section {
+  padding: 1.5rem 1.25rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+@media (min-width: 768px) { .section { padding: 2rem 2.5rem; } }
+
+.film-strip {
+  height: 16px;
+  background-color: #000;
+  background-image: repeating-linear-gradient(90deg, #000 0 8px, #fff 8px 14px, #000 14px 22px);
+  background-size: 22px 6px;
+  background-repeat: repeat-x;
+  background-position: 0 5px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--ink);
+  color: var(--yellow);
+  border: 0;
+  padding: 0.6rem 1rem;
+  font: 700 0.95rem var(--body);
+  cursor: pointer;
+  box-shadow: 3px 3px 0 var(--pink);
+}
+.btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--pink); }
+.btn:focus-visible, a:focus-visible, button:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
