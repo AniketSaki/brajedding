@@ -1,0 +1,81 @@
+<style>
+  .row{display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap;justify-content:center}
+  .phone{width:375px;height:780px;overflow-y:auto;border:10px solid #111;border-radius:34px;flex-shrink:0}
+  .p{font-size:13px;line-height:1.45;color:#111;font-family:Arial,Helvetica,sans-serif;
+     background-color:#ffe94d;background-image:radial-gradient(#ff4f9a 1.3px,transparent 1.6px);background-size:9px 9px}
+  .p h1,.p h4{margin:0}
+  .p .label{font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:700}
+  .p .strip{height:16px;background:#000;background-image:repeating-linear-gradient(90deg,#000 0 8px,#fff 8px 14px,#000 14px 22px);background-size:22px 6px;background-repeat:repeat-x;background-position:0 5px}
+  .p .hero{background-color:#001489;color:#fff;padding:30px 20px 22px;border-bottom:4px solid #000;
+     background-image:radial-gradient(rgba(255,255,255,.16) 1.2px,transparent 1.5px);background-size:8px 8px}
+  .p .live{display:inline-flex;align-items:center;gap:6px;background:#fff;color:#001489;padding:3px 8px;border:2px solid #000}
+  .p .live i{width:8px;height:8px;border-radius:50%;background:#e00;display:block}
+  .p .hero h1{font-family:"Arial Black",Impact,sans-serif;font-size:38px;line-height:.95;text-transform:uppercase;transform:rotate(-2deg);margin:12px 0 8px;text-shadow:3px 0 0 #ff4f9a,-3px 0 0 #00e5ff}
+  .p .cd{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:18px}
+  .p .cd div{background:#fff;color:#001489;border:2px solid #000;padding:8px 2px;text-align:center;box-shadow:3px 3px 0 #000}
+  .p .cd b{display:block;font-family:"Arial Black",sans-serif;font-size:26px;text-shadow:2px 0 0 #ff4f9a}
+  .p .cd span{font-size:9px;font-weight:700}
+  .p .sponsor{margin-top:16px;border-top:1px dashed #C8C8C8;padding-top:10px;font-size:10px;color:#C8C8C8;letter-spacing:.15em;text-transform:uppercase}
+  .p .sponsor b{color:#fff}
+  .p .sec{padding:20px}
+  .p .bubble{position:relative;margin:26px 20px 30px;background:#fff;border:3px solid #111;border-radius:22px;padding:18px;font-size:18px;box-shadow:6px 6px 0 #111}
+  .p .bubble:after{content:"";position:absolute;left:36px;bottom:-22px;border:12px solid transparent;border-top:14px solid #111;border-left:6px solid #111}
+  .p .tag{display:inline-block;background:#ff4f9a;color:#fff;border:2px solid #111;padding:3px 8px;font-family:"Arial Black",sans-serif;font-size:12px;transform:rotate(-3deg)}
+  .p .btn{display:inline-block;margin-top:12px;background:#111;color:#ffe94d;padding:9px 14px;font-size:13px;font-weight:700;font-style:italic}
+  .p .tab{display:inline-block;background:#111;color:#ffe94d;border:2px solid #111;padding:4px 10px;transform:rotate(-2deg)}
+  .p .pol{display:grid;gap:26px;margin-top:18px;padding:0 22px}
+  .p .pol div{aspect-ratio:4/5;background:#fff;border-radius:14px;padding:8px;box-shadow:0 0 0 2px #111,5px 6px 0 2px rgba(0,0,0,.35);position:relative}
+  .p .pol div:before{content:"";display:block;height:100%;border-radius:8px;background:#ffb3d4;background-image:radial-gradient(#ff4f9a 1.5px,transparent 2px);background-size:7px 7px}
+  .p .pol div:after{content:"";position:absolute;top:-10px;left:40%;width:60px;height:20px;background:rgba(0,229,255,.6);transform:rotate(-6deg)}
+  .p .pol div:nth-child(odd){transform:rotate(-3deg)}.p .pol div:nth-child(even){transform:rotate(3deg)}
+  .p .panel{background:#fff;border:3px solid #111;padding:14px;margin-top:14px;box-shadow:5px 5px 0 #111}
+  .p .panel h4{font-family:"Arial Black",sans-serif;font-size:16px;text-transform:uppercase}
+  .p .stars{color:#ff4f9a;font-weight:700;font-size:12px;margin:2px 0 6px}
+  .p .panel p{margin:0;color:#333}
+  .p .more{font-weight:700;text-decoration:underline}
+  .p .opt{display:flex;justify-content:space-between;gap:8px;border:2px solid #111;padding:9px 10px;margin-top:8px;font-weight:700;background:#fff;position:relative;overflow:hidden}
+  .p .opt .bar{position:absolute;left:0;top:0;bottom:0;background:#00e5ff;opacity:.45}
+  .p .opt span{position:relative}
+  .p .boom{font-family:"Arial Black",sans-serif;font-size:22px;color:#ff4f9a;text-shadow:2px 2px 0 #111;transform:rotate(-6deg);display:inline-block}
+  .p .farewell{margin:10px 20px 26px;background:#001489;color:#fff;border:3px solid #111;box-shadow:6px 6px 0 #111;padding:22px 18px;text-align:center}
+  .p .farewell h4{font-family:"Arial Black",sans-serif;font-size:20px;line-height:1.05;text-transform:uppercase;text-shadow:2px 0 0 #ff4f9a,-2px 0 0 #00e5ff}
+  .p .foot{background:#111;color:#ffe94d;text-align:center;padding:20px;font-size:12px;font-weight:700}
+</style>
+
+<h2>v4: all your changes, phone view</h2>
+<p class="subtitle">Sticker-style photos with tape, live-stream poster, sponsor line, real quote, new poll, farewell section.</p>
+
+<div class="row">
+  <div class="phone"><div class="p">
+    <div class="strip"></div>
+    <div class="hero">
+      <span class="live label"><i></i>Streaming live soon from Guruvayur</span>
+      <h1>Brajesh &amp; Saranya: The Wedding</h1>
+      <div class="label" style="color:#C8C8C8">Rated U/A for emotional damage</div>
+      <div class="cd"><div><b>69</b><span>DAYS</span></div><div><b>13</b><span>HRS</span></div><div><b>42</b><span>MIN</span></div><div><b>08</b><span>SEC</span></div></div>
+      <div class="label" style="margin-top:14px;color:#fff">Premieres 3 Feb 2027 · Guruvayur</div>
+      <div class="sponsor">Brought to you by <b>Dating Splinter</b></div>
+    </div>
+
+    <div class="bubble"><span class="tag">BoTD</span> <span class="label" style="color:#999">Brajesh of the Day</span><br><br>"CEOji must resign"<br><span class="btn">*Varuned</span></div>
+
+    <div class="sec"><span class="tab label">Stickered</span>
+      <div class="pol"><div></div><div></div></div></div>
+
+    <div class="sec"><span class="tab label">Reviews</span>
+      <div class="panel"><h4>The Goa incident</h4><div class="stars">★★★★☆ · by a friend</div><p>A placeholder story, written like a short blog post… <span class="more">read more</span></p></div></div>
+
+    <div class="sec"><span class="tab label">Audience poll</span>
+      <div class="panel"><h4>Did you get the invite?</h4>
+        <div class="opt"><div class="bar" style="width:34%"></div><span>Yes, physical invite hand delivered in person 💌</span><span>34%</span></div>
+        <div class="opt"><div class="bar" style="width:28%"></div><span>Only a digital group one 📱</span><span>28%</span></div>
+        <div class="opt"><div class="bar" style="width:22%"></div><span>He's thinking about it 🤔</span><span>22%</span></div>
+        <div class="opt"><div class="bar" style="width:16%"></div><span>Gatecrash! 🚪💥</span><span>16%</span></div>
+        <div style="margin-top:10px"><span class="boom">POW! 32 votes</span></div></div></div>
+
+    <div class="farewell"><div class="label" style="color:#C8C8C8;margin-bottom:8px">A message from the management</div>
+      <h4>Mubi club wishes you a fond farewell</h4><p style="margin:10px 0 0">You will be missed. 🫡</p></div>
+
+    <div class="foot">we got brajedding before nadodi subs</div>
+  </div></div>
+</div>
