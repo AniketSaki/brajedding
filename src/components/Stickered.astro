@@ -2,6 +2,8 @@
 import type { ImageMetadata } from 'astro';
 import { Picture, getImage } from 'astro:assets';
 import captions from '../data/captions.json';
+import Reactions from './Reactions.astro';
+import { photoCardId } from '../lib/reactions';
 
 const files = import.meta.glob<{ default: ImageMetadata }>('../assets/stills/*.{jpg,jpeg,png,webp,JPG,JPEG,PNG}', {
   eager: true,
@@ -36,6 +38,7 @@ const stills = await Promise.all(
             />
           </button>
           {s.caption && <p class="caption">{s.caption}</p>}
+          <Reactions card={photoCardId(s.name)} />
         </li>
       ))}
     </ul>

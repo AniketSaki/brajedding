@@ -24,3 +24,17 @@ test('words match spec', () =>
   expect(site.reactions.words.map((w) => w.label)).toEqual([
     'slay', 'no cap', "it's giving", 'rizz', 'ate', 'based', 'aura +1000', 'delulu', 'mid', 'cooked', 'sus', 'L',
   ]));
+
+import { nextChoice, applyLocal } from '../src/lib/reactions';
+
+test('nextChoice: pick new, switch, or tap own to remove', () => {
+  expect(nextChoice(null, 'slay')).toBe('slay');
+  expect(nextChoice('slay', 'mid')).toBe('mid');
+  expect(nextChoice('slay', 'slay')).toBeNull();
+});
+
+test('applyLocal moves one count, never below zero', () => {
+  expect(applyLocal({ slay: 1, mid: 0 }, 'slay', 'mid')).toEqual({ slay: 0, mid: 1 });
+  expect(applyLocal({}, 'slay', null)).toEqual({ slay: 0 });
+  expect(applyLocal({ sus: 2 }, null, 'sus')).toEqual({ sus: 3 });
+});

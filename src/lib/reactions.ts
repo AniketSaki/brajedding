@@ -17,3 +17,21 @@ export function chipsFor(counts: Record<string, number>, words: Word[]): Chip[] 
     .sort((a, b) => b.count - a.count || a.i - b.i)
     .map(({ i: _i, ...c }) => c);
 }
+
+/** WhatsApp semantics: tapping your current word removes it; any other word becomes your reaction. */
+export function nextChoice(current: string | null, picked: string): string | null {
+  return current === picked ? null : picked;
+}
+
+/** Optimistic count update for one voter moving from `prev` to `next`. */
+export function applyLocal(
+  counts: Record<string, number>,
+  prev: string | null,
+  next: string | null,
+): Record<string, number> {
+  const out = { ...counts };
+  if (prev === next) return out;
+  if (prev) out[prev] = Math.max(0, (out[prev] ?? 0) - 1);
+  if (next) out[next] = (out[next] ?? 0) + 1;
+  return out;
+}

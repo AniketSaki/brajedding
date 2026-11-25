@@ -1,0 +1,193 @@
+---
+import { site } from '../config/site';
+
+interface Props {
+  card: string;
+}
+const { card } = Astro.props;
+const words = site.reactions.words;
+---
+<div class="reactions" data-card={card} hidden>
+  <div class="chips" data-chips></div>
+  <div class="add-wrap">
+    <button type="button" class="react-add" aria-haspopup="true" aria-expanded="false">+ react</button>
+    <div class="picker panel" role="menu" aria-label="Pick a reaction" hidden>
+      {words.map((w) => (
+        <button type="button" role="menuitemradio" aria-checked="false" data-word={w.id}>
+          <span class="w">{w.label}</span><span class="n"></span>
+        </button>
+      ))}
+    </div>
+  </div>
+</div>
+
+<script>
+  import { site } from '../config/site';
+  import { applyLocal, chipsFor, nextChoice } from '../lib/reactions';
+
+  type Counts = Record<string, number>;
+  const words = site.reactions.words;
+  const bars = [...document.querySelectorAll<HTMLElement>('.reactions[data-card]')];
+  const counts: Record<string, Counts> = {};
+  const mine: Record<string, string | null> = {};
+  let openPicker: HTMLElement | null = null;
+
+  function render(bar: HTMLElement) {
+    const card = bar.dataset.card!;
+    const c = counts[card] ?? {};
+    const me = mine[card] ?? null;
+    const chips = bar.querySelector<HTMLElement>('[data-chips]')!;
+    chips.replaceChildren(
+      ...chipsFor(c, words).map((chip) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'chip' + (chip.id === me ? ' me' : '');
+        b.dataset.word = chip.id;
+        b.setAttribute('aria-pressed', String(chip.id === me));
+        b.setAttribute('aria-label', `${chip.label}, ${chip.count} ${chip.count === 1 ? 'reaction' : 'reactions'}`);
+        const w = document.createElement('span');
+        w.textContent = chip.label;
+        const n = document.createElement('b');
+        n.textContent = String(chip.count);
+        b.append(w, n);
+        return b;
+      }),
+    );
+    bar.querySelectorAll<HTMLButtonElement>('.picker [data-word]').forEach((b) => {
+      const id = b.dataset.word!;
+      b.setAttribute('aria-checked', String(id === me));
+      b.classList.toggle('me', id === me);
+      b.querySelector('.n')!.textContent = c[id] ? String(c[id]) : '';
+    });
+  }
+
+  function closePicker() {
+    if (!openPicker) return;
+    openPicker.hidden = true;
+    const host = openPicker.closest<HTMLElement>('li, article');
+    if (host) host.style.zIndex = '';
+    openPicker.closest('.add-wrap')!.querySelector('.react-add')!.setAttribute('aria-expanded', 'false');
+    openPicker = null;
+  }
+
+  function openFor(bar: HTMLElement) {
+    const picker = bar.querySelector<HTMLElement>('.picker')!;
+    const btn = bar.querySelector<HTMLElement>('.react-add')!;
+    closePicker();
+    picker.hidden = false;
+    picker.style.transform = '';
+    // Cards are rotated (own stacking context); lift the open one above its neighbours.
+    const host = bar.closest<HTMLElement>('li, article');
+    if (host) {
+      host.style.position ||= 'relative';
+      host.style.zIndex = '30';
+    }
+    btn.setAttribute('aria-expanded', 'true');
+    openPicker = picker;
+    const r = picker.getBoundingClientRect();
+    const overflowRight = r.right - (document.documentElement.clientWidth - 8);
+    const overflowLeft = 8 - r.left;
+    if (overflowRight > 0) picker.style.transform = `translateX(${-overflowRight}px)`;
+    else if (overflowLeft > 0) picker.style.transform = `translateX(${overflowLeft}px)`;
+    picker.querySelector<HTMLElement>('[data-word]')?.focus();
+  }
+
+  async function pick(bar: HTMLElement, word: string) {
+    const card = bar.dataset.card!;
+    const prev = mine[card] ?? null;
+    const next = nextChoice(prev, word);
+    const before = counts[card] ?? {};
+    counts[card] = applyLocal(before, prev, next);
+    mine[card] = next;
+    render(bar);
+    try {
+      const res = await fetch('/api/reactions', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ card, word: next }),
+      });
+      if (!res.ok) throw new Error(String(res.status));
+      const body = await res.json();
+      counts[card] = body.counts;
+      mine[card] = body.mine;
+    } catch {
+      counts[card] = before;
+      mine[card] = prev;
+    }
+    render(bar);
+  }
+
+  async function init() {
+    if (!bars.length) return;
+    try {
+      const res = await fetch('/api/reactions');
+      if (!res.ok) return;
+      const body = await res.json();
+      Object.assign(counts, body.counts);
+      Object.assign(mine, body.mine);
+    } catch {
+      return;
+    }
+    for (const bar of bars) {
+      render(bar);
+      bar.hidden = false;
+      bar.addEventListener('click', (e) => {
+        const t = e.target as HTMLElement;
+        if (t.closest('.react-add')) {
+          e.stopPropagation();
+          const picker = bar.querySelector<HTMLElement>('.picker')!;
+          if (openPicker === picker) closePicker();
+          else openFor(bar);
+          return;
+        }
+        const w = t.closest<HTMLElement>('[data-word]');
+        if (w) {
+          e.stopPropagation();
+          closePicker();
+          pick(bar, w.dataset.word!);
+        }
+      });
+    }
+    document.addEventListener('click', (e) => {
+      if (openPicker && !openPicker.contains(e.target as Node)) closePicker();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && openPicker) {
+        const btn = openPicker.closest('.add-wrap')!.querySelector<HTMLElement>('.react-add');
+        closePicker();
+        btn?.focus();
+      }
+    });
+  }
+
+  init();
+</script>
+
+<style>
+  .reactions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; margin-top: 0.7rem; }
+  .chips { display: contents; }
+  .reactions :global(.chip), .react-add {
+    display: inline-flex; align-items: center; gap: 0.3rem; min-height: 30px;
+    font: 700 0.8rem var(--body); color: var(--ink); cursor: pointer;
+    border: 2px solid var(--ink); background: var(--white); padding: 0.15rem 0.5rem;
+  }
+  .reactions :global(.chip b) { font-variant-numeric: tabular-nums; }
+  .reactions :global(.chip.me) { background: var(--pink); color: var(--white); }
+  .react-add { border-style: dashed; background: var(--yellow); }
+  .react-add[aria-expanded='true'] { border-style: solid; background: var(--ink); color: var(--yellow); }
+  .add-wrap { position: relative; }
+  .picker {
+    position: absolute; z-index: 20; left: 0; top: calc(100% + 6px);
+    width: max-content; max-width: min(92vw, 300px);
+    display: flex; flex-wrap: wrap; gap: 0.35rem; padding: 0.6rem;
+  }
+  .picker button {
+    display: inline-flex; align-items: center; gap: 0.3rem; min-height: 32px;
+    font: 700 0.85rem var(--body); color: var(--ink); background: var(--white);
+    border: 2px solid var(--ink); padding: 0.15rem 0.5rem; cursor: pointer;
+  }
+  .picker button:hover { background: var(--yellow); }
+  .picker button.me { background: var(--pink); color: var(--white); }
+  .picker .n { font-variant-numeric: tabular-nums; opacity: 0.75; }
+  .picker .n:empty { display: none; }
+</style>
