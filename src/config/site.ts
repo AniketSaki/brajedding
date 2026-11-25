@@ -32,6 +32,22 @@ export const site = {
       { id: 'gatecrash', label: 'Gatecrash! 🚪💥' },
     ] as PollOption[],
   },
+  reactions: {
+    words: [
+      { id: 'slay', label: 'slay' },
+      { id: 'no-cap', label: 'no cap' },
+      { id: 'its-giving', label: "it's giving" },
+      { id: 'rizz', label: 'rizz' },
+      { id: 'ate', label: 'ate' },
+      { id: 'based', label: 'based' },
+      { id: 'aura', label: 'aura +1000' },
+      { id: 'delulu', label: 'delulu' },
+      { id: 'mid', label: 'mid' },
+      { id: 'cooked', label: 'cooked' },
+      { id: 'sus', label: 'sus' },
+      { id: 'l', label: 'L' },
+    ],
+  },
   meta: {
     description: "The countdown to Brajesh & Saranya's wedding. Brought to you by Dating Splinter.",
   },
