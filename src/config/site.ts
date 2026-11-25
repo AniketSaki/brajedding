@@ -20,6 +20,8 @@ export const site = {
     heading: 'Mubi club wishes you a fond farewell',
     body: 'You will be missed.',
   },
+  /** Comic shout bubble between BoTD and Stickered. */
+  shout: 'employee of the year - Jeff Bezos',
   footer: 'we got brajedding before nadodi subs',
   poll: {
     question: 'Did you get the invite?',
