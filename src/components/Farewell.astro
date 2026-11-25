@@ -1,0 +1,24 @@
+---
+import { site } from '../config/site';
+const { label, heading, body } = site.farewell;
+---
+<section class="section farewell-wrap" aria-labelledby="farewell-h">
+  <div class="farewell halftone-blue">
+    <p class="label">{label}</p>
+    <h2 id="farewell-h" class="misprint">{heading}</h2>
+    <p class="body">{body} <span aria-hidden="true">🫡</span></p>
+  </div>
+</section>
+
+<style>
+  .farewell {
+    max-width: 640px; margin: 0 auto; text-align: center; border: 3px solid var(--ink);
+    box-shadow: 6px 6px 0 var(--ink); padding: 1.6rem 1.25rem; transform: rotate(-0.8deg);
+  }
+  .label { color: var(--grey); margin: 0; }
+  h2 {
+    font-family: var(--display); font-weight: 400; text-transform: uppercase; letter-spacing: 0.03em;
+    font-size: clamp(1.9rem, 8vw, 3rem); line-height: 1; margin: 0.6rem 0 0.7rem;
+  }
+  .body { margin: 0; font-size: 1.1rem; }
+</style>

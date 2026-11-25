@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import Footer from '../../components/Footer.astro';
 import { starString, teaserFrom } from '../../lib/stories';
 
 export async function getStaticPaths() {
@@ -24,6 +25,7 @@ const { Content } = await render(story);
     <article class="panel prose"><Content /></article>
     <p class="back-bottom"><a class="btn" href="/#reviews">← Back to the premiere</a></p>
   </main>
+  <Footer />
 </Base>
 
 <style>
