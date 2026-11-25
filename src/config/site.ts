@@ -20,6 +20,8 @@ export const site = {
     heading: 'Mubi club wishes you a fond farewell',
     body: 'You will be missed.',
   },
+  /** Comic shout bubble between BoTD and Stickered. */
+  shout: 'employee of the year - Jeff Bezos',
   footer: 'we got brajedding before nadodi subs',
   poll: {
     question: 'Did you get the invite?',
@@ -29,6 +31,22 @@ export const site = {
       { id: 'thinking', label: "He's thinking about it 🤔" },
       { id: 'gatecrash', label: 'Gatecrash! 🚪💥' },
     ] as PollOption[],
+  },
+  reactions: {
+    words: [
+      { id: 'slay', label: 'slay' },
+      { id: 'no-cap', label: 'no cap' },
+      { id: 'its-giving', label: "it's giving" },
+      { id: 'rizz', label: 'rizz' },
+      { id: 'ate', label: 'ate' },
+      { id: 'based', label: 'based' },
+      { id: 'aura', label: 'aura +1000' },
+      { id: 'delulu', label: 'delulu' },
+      { id: 'mid', label: 'mid' },
+      { id: 'cooked', label: 'cooked' },
+      { id: 'sus', label: 'sus' },
+      { id: 'l', label: 'L' },
+    ],
   },
   meta: {
     description: "The countdown to Brajesh & Saranya's wedding. Brought to you by Dating Splinter.",
